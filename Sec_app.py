@@ -258,7 +258,7 @@ def main():
         st.write("""
         This dashboard presents faculty performance analysis based on various skill groups:
         
-        1. **Core Skills***: Fundamental 6 Core Skills including self-awareness, confidence, positive attitude, communication, creativity, and global competence
+        1. **Core Skills**: Fundamental 6 Core Skills including self-awareness, confidence, positive attitude, communication, creativity, and global competence
         2. **Communication Cluster***: Communication-related skills including communication, encode, decode, plan, and dommunication and colaboration. 
         3. **Leadership Cluster***: Leadership and management-related skills including leadership and project management, critical thinking and problem solving, critical thinking, self-confidence, initiative, show dedication, and responsibility taking.
         4. **Global Cluster***: Cultural and global awareness-related skills including global competence, global citizen, intercultural awareness, open-minded, exploration and openness to new perspectives, collaboration and collective creativity, emotions, personal growth, and self-reflection.
