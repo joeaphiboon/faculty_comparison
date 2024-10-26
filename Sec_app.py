@@ -23,14 +23,14 @@ SKILL_GROUPS = {
         'avg Creativity',
         'avg Global Competence'
     ],
-    'PISA Communication': [
+    'Communication Cluster': [
         'avg Communication',
         'Encode',
         'Decode',
         'Plan',
         'Communicationandcollaboration'
     ],
-    'PISA Leadership': [
+    'Leadership Cluster': [
         'Leadershipandprojectmanagement',
         'Criticalthinkingandproblemsolving',
         'Criticalthinking',
@@ -39,7 +39,7 @@ SKILL_GROUPS = {
         'Showdedication',
         'Responsibilitytaking'
     ],
-    'PISA Global Competence': [
+    'Global Cluster': [
         'avg Global Competence',
         'Globalcitizen',
         'Interculturalawareness',
@@ -71,6 +71,7 @@ def load_data():
             st.sidebar.warning("No secrets configuration found")
             raise Exception("No secrets configuration")
             
+
         if "general" not in st.secrets:
             st.sidebar.warning("No 'general' section in secrets")
             raise Exception("No 'general' section")
@@ -257,11 +258,11 @@ def main():
         st.write("""
         This dashboard presents faculty performance analysis based on various skill groups:
         
-        1. **Core Skills**: Fundamental competencies including self-awareness, confidence, positive attitude, communication, creativity, and global competence
-        2. **PISA Communication**: Communication-related skills including communication, encode, decode, plan, and dommunication and colaboration. 
-        3. **PISA Leadership**: Leadership and management-related skills including leadership and project management, critical thinking and problem solving, critical thinking, self-confidence, initiative, show dedication, and responsibility taking.
-        4. **PISA Global Competence**: Cultural and global awareness-related skills including global competence, global citizen, intercultural awareness, open-minded, exploration and openness to new perspectives, collaboration and collective creativity, emotions, personal growth, and self-reflection.
-        
+        1. **Core Skills***: Fundamental 6 Core Skills including self-awareness, confidence, positive attitude, communication, creativity, and global competence
+        2. **Communication Cluster***: Communication-related skills including communication, encode, decode, plan, and dommunication and colaboration. 
+        3. **Leadership Cluster***: Leadership and management-related skills including leadership and project management, critical thinking and problem solving, critical thinking, self-confidence, initiative, show dedication, and responsibility taking.
+        4. **Global Cluster**: Cultural and global awareness-related skills including global competence, global citizen, intercultural awareness, open-minded, exploration and openness to new perspectives, collaboration and collective creativity, emotions, personal growth, and self-reflection.
+        *:Clusters are based on PISA definitions and Peason correlation analysis
         All metrics are presented as Z-scores, representing standard deviations from the mean.
         """)
 
