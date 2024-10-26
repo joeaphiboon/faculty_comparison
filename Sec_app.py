@@ -8,7 +8,7 @@ import numpy as np
 
 # Page configuration
 st.set_page_config(
-    page_title="Faculty Performance Dashboard",
+    page_title="Performance Dashboard",
     page_icon="📊",
     layout="wide"
 )
@@ -209,7 +209,7 @@ def create_line_chart(df, skill_group):
 
 # Main app
 def main():
-    st.title("Faculty Performance Analysis Dashboard")
+    st.title("Performance Analysis Dashboard")
     st.text('v.1.0.1 : by JTIAPBN.Ai')
     # Load data
     df = load_data()
