@@ -28,26 +28,26 @@ SKILL_GROUPS = {
         'Encode',
         'Decode',
         'Plan',
-        'Communicationandcollaboration'
+        'Communication and collaboration'
     ],
     'Leadership Cluster': [
-        'Leadershipandprojectmanagement',
-        'Criticalthinkingandproblemsolving',
-        'Criticalthinking',
+        'Leadership and project management',
+        'Criticalthinking and problemsolving',
+        'Critical thinking',
         'Self-confidence',
         'Initiative',
-        'Showdedication',
-        'Responsibilitytaking'
+        'Showde dication',
+        'Responsibility taking'
     ],
     'Global Cluster': [
         'avg Global Competence',
         'Globalcitizen',
-        'Interculturalawareness',
+        'Intercultural awareness',
         'Open-minded',
-        'Explorationandopennesstonewperspectives',
-        'Collaborationandcollectivecreativity',
+        'Exploration and openness to new perspectives',
+        'Collaboration and collective creativity',
         'Emotions',
-        'Personalgrowth',
+        'Personal growth',
         'Self-reflection'
     ]
 }
