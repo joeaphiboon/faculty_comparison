@@ -65,14 +65,12 @@ def load_data():
     """Load data from different sources."""
     # First try to load from secrets
     try:
-        st.sidebar.info("Attempting to load from secrets...")
-        
+
         # Check if secrets exist
         if not hasattr(st, 'secrets'):
             st.sidebar.warning("No secrets configuration found")
             raise Exception("No secrets configuration")
             
- 
         if "general" not in st.secrets:
             st.sidebar.warning("No 'general' section in secrets")
             raise Exception("No 'general' section")
@@ -84,7 +82,7 @@ def load_data():
         # Try to parse the JSON data
         try:
             df = pd.read_json(st.secrets["general"]["data"])
-            st.sidebar.success("✅ Data successfully loaded from secrets")
+            #st.sidebar.success("✅ Data successfully loaded from secrets")
             return df
         except Exception as e:
             st.sidebar.error(f"Error parsing JSON data: {str(e)}")
@@ -97,7 +95,7 @@ def load_data():
         try:
             st.sidebar.info("Attempting to load from local file...")
             df = pd.read_csv('Faculty_Comparison_of_Z-Scores.csv')
-            st.sidebar.success("✅ Data loaded from local file")
+            #st.sidebar.success("✅ Data loaded from local file")
             return df
         except Exception as e:
             st.sidebar.error(f"Error loading local file: {str(e)}")
