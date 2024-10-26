@@ -4,6 +4,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import numpy as np
+import os
 
 # Page configuration
 st.set_page_config(
@@ -62,17 +63,16 @@ def format_metric_name(name):
 
 @st.cache_data
 def load_data():
-    """Load data with fallback options."""
+    """Load data from local file or GitHub."""
     try:
-        # Try loading local file first
-        df = pd.read_csv('Faculty_Comparison_of_Z-Scores.csv')
-        st.sidebar.success("✅ Data loaded from local file")
-        return df
-    except FileNotFoundError:
-        st.sidebar.warning("⚠️ Local file not found")
-        return None
+        # First try loading from root directory
+        if os.path.exists('Faculty_Comparison_of_Z-Scores.csv'):
+            return pd.read_csv('Faculty_Comparison_of_Z-Scores.csv')
+        else:
+            st.error("CSV file not found in local directories")
+            return None
     except Exception as e:
-        st.sidebar.error(f"Error loading data: {str(e)}")
+        st.error(f"Error loading data: {str(e)}")
         return None
 
 def create_radar_chart(df, selected_faculty, skill_group='Core Skills'):
@@ -188,8 +188,14 @@ def main():
     df = load_data()
     
     if df is None:
-        st.error("Unable to load data. Please ensure the CSV file is in the same directory as the app.")
-        st.stop()
+        st.error("Unable to load data. Please check data configuration.")
+        # Add file uploader as fallback
+        uploaded_file = st.file_uploader("Upload Faculty_Comparison_of_Z-Scores.csv", type=['csv'])
+        if uploaded_file is not None:
+            df = pd.read_csv(uploaded_file)
+            st.success("Data loaded successfully from uploaded file!")
+        else:
+            st.stop()
     
     # Sidebar
     st.sidebar.title("Dashboard Controls")
