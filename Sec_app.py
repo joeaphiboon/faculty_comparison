@@ -65,19 +65,23 @@ def load_data():
     """Load data from different sources."""
     try:
         # First try to load from secrets
-        if 'data' in st.secrets:
-            # Parse JSON data from secrets
-            data_json = st.secrets['data']
-            df = pd.read_json(data_json)
-            return df
+        if hasattr(st.secrets, 'general') and 'data' in st.secrets.general:
+            try:
+                # Parse JSON data from secrets
+                df = pd.read_json(st.secrets.general.data)
+                st.sidebar.success("✅ Data loaded from secrets")
+                return df
+            except Exception as e:
+                st.sidebar.error(f"Error parsing secrets data: {str(e)}")
         
         # Fallback to local file if running locally
-        else:
-            df = pd.read_csv('Faculty_Comparison_of_Z-Scores.csv')
-            return df
+        st.sidebar.info("Loading from local file...")
+        df = pd.read_csv('Faculty_Comparison_of_Z-Scores.csv')
+        st.sidebar.success("✅ Data loaded from local file")
+        return df
             
     except Exception as e:
-        st.error(f"Error loading data: {str(e)}")
+        st.sidebar.error(f"Error loading data: {str(e)}")
         return None
 
 def create_radar_chart(df, selected_faculty, skill_group='Core Skills'):
