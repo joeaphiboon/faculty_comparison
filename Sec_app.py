@@ -5,6 +5,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import numpy as np
 import os
+import json
 
 # Page configuration
 st.set_page_config(
@@ -61,16 +62,21 @@ def format_metric_name(name):
     name = name.replace(' and ', ' & ')
     return name.title()
 
-@st.cache_data
 def load_data():
-    """Load data from local file or GitHub."""
+    """Load data from different sources."""
     try:
-        # First try loading from root directory
-        if os.path.exists('Faculty_Comparison_of_Z-Scores.csv'):
-            return pd.read_csv('Faculty_Comparison_of_Z-Scores.csv')
+        # First try to load from secrets
+        if 'data' in st.secrets:
+            # Parse JSON data from secrets
+            data_json = st.secrets['data']
+            df = pd.read_json(data_json)
+            return df
+        
+        # Fallback to local file if running locally
         else:
-            st.error("CSV file not found in local directories")
-            return None
+            df = pd.read_csv('Faculty_Comparison_of_Z-Scores.csv')
+            return df
+            
     except Exception as e:
         st.error(f"Error loading data: {str(e)}")
         return None
@@ -182,20 +188,14 @@ def create_line_chart(df, skill_group):
 
 # Main app
 def main():
-    st.title("Faculty Performance Analysis Dashboard")
-    
+    st.title("Faculty Performance Analysis Dashboard v.1.0.1")
+    st.text('by JTIAPBN.Ai')
     # Load data
     df = load_data()
     
     if df is None:
-        st.error("Unable to load data. Please check data configuration.")
-        # Add file uploader as fallback
-        uploaded_file = st.file_uploader("Upload Faculty_Comparison_of_Z-Scores.csv", type=['csv'])
-        if uploaded_file is not None:
-            df = pd.read_csv(uploaded_file)
-            st.success("Data loaded successfully from uploaded file!")
-        else:
-            st.stop()
+        st.error("Unable to load data. Please check configuration.")
+        st.stop()
     
     # Sidebar
     st.sidebar.title("Dashboard Controls")
