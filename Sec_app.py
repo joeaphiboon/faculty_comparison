@@ -72,9 +72,7 @@ def load_data():
             st.sidebar.warning("No secrets configuration found")
             raise Exception("No secrets configuration")
             
-        # Debug information
-        st.sidebar.write("Available secret sections:", list(st.secrets.keys()))
-        
+ 
         if "general" not in st.secrets:
             st.sidebar.warning("No 'general' section in secrets")
             raise Exception("No 'general' section")
