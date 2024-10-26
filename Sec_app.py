@@ -65,15 +65,19 @@ def load_data():
     """Load data from different sources."""
     try:
         # First try to load from secrets
-        if hasattr(st.secrets, 'general') and 'data' in st.secrets.general:
-            try:
+        if 'general' in st.secrets:
+            if 'data' in st.secrets.general:
+                try:
                 # Parse JSON data from secrets
-                df = pd.read_json(st.secrets.general.data)
-                st.sidebar.success("✅ Data loaded from secrets")
-                return df
-            except Exception as e:
-                st.sidebar.error(f"Error parsing secrets data: {str(e)}")
-        
+                    df = pd.read_json(st.secrets.general.data)
+                    st.sidebar.success("✅ Data loaded from secrets")
+                    return df
+                except Exception as e:
+                    st.sidebar.error(f"Error parsing secrets data: {str(e)}")
+            else:
+                st.error("No 'data' key in general section")
+        else:
+            st.error("No 'general' section found in secrets")
         # Fallback to local file if running locally
         st.sidebar.info("Loading from local file...")
         df = pd.read_csv('Faculty_Comparison_of_Z-Scores.csv')
@@ -191,8 +195,8 @@ def create_line_chart(df, skill_group):
 
 # Main app
 def main():
-    st.title("Faculty Performance Analysis Dashboard v.1.0.1")
-    st.text('by JTIAPBN.Ai')
+    st.title("Faculty Performance Analysis Dashboard")
+    st.text('v.1.0.1 : by JTIAPBN.Ai')
     # Load data
     df = load_data()
     
