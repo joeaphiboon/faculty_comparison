@@ -4,13 +4,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import numpy as np
-import os
-from dotenv import load_dotenv
-import base64
-from io import StringIO
-
-# Load environment variables
-load_dotenv()
 
 # Page configuration
 st.set_page_config(
@@ -19,19 +12,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Prevent data download
-st.markdown("""
-    <style>
-        .downloadButton {
-            display: none !important;
-        }
-        .stDownloadButton {
-            display: none !important;
-        }
-    </style>
-""", unsafe_allow_html=True)
-
-# [Your SKILL_GROUPS dictionary remains the same]
+# Define skill groups
 SKILL_GROUPS = {
     'Core Skills': [
         'avg Self-Awareness',
@@ -73,26 +54,25 @@ SKILL_GROUPS = {
 def format_metric_name(name):
     """Format metric names for better readability."""
     name = name.replace('avg ', '')
+    # Add spaces before capital letters
     name = ''.join([' ' + c if c.isupper() else c for c in name]).strip()
+    # Replace 'and' with '&'
     name = name.replace(' and ', ' & ')
     return name.title()
 
 @st.cache_data
 def load_data():
-    """Load and preprocess the data securely."""
+    """Load data with fallback options."""
     try:
-        # First try to load from Streamlit secrets (for cloud deployment)
-        if 'csv_data' in st.secrets:
-            encoded_data = st.secrets["csv_data"]
-            decoded_data = base64.b64decode(encoded_data).decode('utf-8')
-            df = pd.read_csv(StringIO(decoded_data))
-        else:
-            # Fall back to local file (for development)
-            data_path = os.getenv('DATA_PATH', 'data/Faculty_Comparison_of_Z-Scores.csv')
-            df = pd.read_csv(data_path)
+        # Try loading local file first
+        df = pd.read_csv('Faculty_Comparison_of_Z-Scores.csv')
+        st.sidebar.success("✅ Data loaded from local file")
         return df
+    except FileNotFoundError:
+        st.sidebar.warning("⚠️ Local file not found")
+        return None
     except Exception as e:
-        st.error("Error loading data. Please check data configuration.")
+        st.sidebar.error(f"Error loading data: {str(e)}")
         return None
 
 def create_radar_chart(df, selected_faculty, skill_group='Core Skills'):
@@ -199,6 +179,7 @@ def create_line_chart(df, skill_group):
     )
     
     return fig
+
 # Main app
 def main():
     st.title("Faculty Performance Analysis Dashboard")
@@ -207,10 +188,56 @@ def main():
     df = load_data()
     
     if df is None:
-        st.error("Unable to load data. Please contact the administrator.")
-        return
+        st.error("Unable to load data. Please ensure the CSV file is in the same directory as the app.")
+        st.stop()
+    
+    # Sidebar
+    st.sidebar.title("Dashboard Controls")
+    selected_faculty = st.sidebar.selectbox(
+        "Select Faculty",
+        df['Faculty'].tolist()
+    )
+    
+    selected_group = st.sidebar.selectbox(
+        "Select Skill Group",
+        list(SKILL_GROUPS.keys())
+    )
+    
+    # Main layout
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        # Radar Chart
+        st.plotly_chart(
+            create_radar_chart(df, selected_faculty, selected_group),
+            use_container_width=True
+        )
+    
+    with col2:
+        # Bar Chart
+        st.plotly_chart(
+            create_bar_chart(df),
+            use_container_width=True
+        )
+    
+    # Line Chart (full width)
+    st.plotly_chart(
+        create_line_chart(df, selected_group),
+        use_container_width=True
+    )
+    
+    # Additional information
+    with st.expander("About the Metrics"):
+        st.write("""
+        This dashboard presents faculty performance analysis based on various skill groups:
         
-    # [Rest of your main() function remains the same]
+        1. **Core Skills**: Fundamental competencies including self-awareness, confidence, positive attitude, communication, creativity, and global competence
+        2. **PISA Communication**: Communication-related skills including communication, encode, decode, plan, and dommunication and colaboration. 
+        3. **PISA Leadership**: Leadership and management-related skills including leadership and project management, critical thinking and problem solving, critical thinking, self-confidence, initiative, show dedication, and responsibility taking.
+        4. **PISA Global Competence**: Cultural and global awareness-related skills including global competence, global citizen, intercultural awareness, open-minded, exploration and openness to new perspectives, collaboration and collective creativity, emotions, personal growth, and self-reflection.
+        
+        All metrics are presented as Z-scores, representing standard deviations from the mean.
+        """)
 
 if __name__ == "__main__":
     main()
