@@ -95,8 +95,110 @@ def load_data():
         st.error("Error loading data. Please check data configuration.")
         return None
 
-# [Rest of your functions remain the same: create_radar_chart, create_bar_chart, create_line_chart]
+def create_radar_chart(df, selected_faculty, skill_group='Core Skills'):
+    """Create a radar chart for the selected faculty."""
+    categories = SKILL_GROUPS[skill_group]
+    formatted_categories = [format_metric_name(cat) for cat in categories]  # Pre-format categories
+    values = df[df['Faculty'] == selected_faculty][categories].values.flatten().tolist()
+    
+    # Add the first value and category at the end to close the polygon
+    formatted_categories_closed = formatted_categories + [formatted_categories[0]]
+    values_closed = values + [values[0]]
+    
+    # Calculate global min and max for selected metrics across all faculties
+    metrics_data = df[categories]
+    global_min = metrics_data.min().min()
+    global_max = metrics_data.max().max()
+    
+    fig = go.Figure()
+    
+    # Add zero line trace with fixed category sequence
+    fig.add_trace(go.Scatterpolar(
+        r=[0] * (len(categories) + 1),  # Add extra point to close the zero line
+        theta=formatted_categories_closed,
+        mode='lines',
+        line=dict(color='Grey', width=2),
+        showlegend=False,
+        hoverinfo='skip'
+    ))
+    
+    # Add main data trace with same fixed category sequence
+    fig.add_trace(go.Scatterpolar(
+        r=values_closed,
+        theta=formatted_categories_closed,
+        fill='toself',
+        name=selected_faculty,
+    ))
+    
+    fig.update_layout(
+        polar=dict(
+            radialaxis=dict(
+                visible=True,
+                showline=True,
+                linewidth=1,
+                linecolor='LightGrey',
+                gridcolor='LightGrey',
+                gridwidth=1,
+                range=[global_min, global_max],
+                title='Average Z-Score',
+                angle=0,  # Position at bottom
+                tickfont=dict(size=12)
+            ),
+            angularaxis=dict(
+                direction='clockwise',
+                period=len(formatted_categories)
+            ),
+            bgcolor='rgba(0,0,0,0)'
+        ),
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='white',    
+        showlegend=True,
+        title=f"{skill_group} Analysis for {selected_faculty}"
 
+    )
+    
+    return fig
+
+def create_bar_chart(df):
+    """Create a bar chart showing overall faculty performance."""
+    avg_scores = df.select_dtypes(include=[np.number]).mean(axis=1)
+    fig = px.bar(
+        x=avg_scores,
+        y=df['Faculty'],
+        orientation='h',
+        title='Overall Faculty Performance',
+        labels={'x': 'Average Z-Score', 'y': 'Faculty'},
+
+    )
+    fig.update_layout(
+        showlegend=False,
+        yaxis={'autorange': 'reversed'},
+        )
+
+    return fig
+
+def create_line_chart(df, skill_group):
+    """Create a line chart for the selected skill group."""
+    metrics = SKILL_GROUPS[skill_group]
+    fig = go.Figure()
+    
+    for metric in metrics:
+        fig.add_trace(go.Scatter(
+            x=df['Faculty'],
+            y=df[metric],
+            name=format_metric_name(metric),
+            mode='lines+markers'
+        ))
+    
+    fig.update_layout(
+        title=f"{skill_group} Comparison Across Faculties",
+        xaxis_title="Faculty",
+        yaxis_title="Z-Score",
+        hovermode='x unified',
+        xaxis={'tickangle': -45}
+    )
+    
+    return fig
 # Main app
 def main():
     st.title("Faculty Performance Analysis Dashboard")
