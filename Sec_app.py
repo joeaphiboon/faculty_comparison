@@ -119,15 +119,7 @@ def create_radar_chart(df, selected_faculty, skill_group='Core Skills'):
     
     fig = go.Figure()
     
-    # Add zero line trace with fixed category sequence
-    fig.add_trace(go.Scatterpolar(
-        r=[0] * (len(categories) + 1),  # Add extra point to close the zero line
-        theta=formatted_categories_closed,
-        mode='lines',
-        line=dict(color='Grey', width=2),
-        showlegend=False,
-        hoverinfo='skip'
-    ))
+    
     
     # Add main data trace with same fixed category sequence
     fig.add_trace(go.Scatterpolar(
@@ -136,6 +128,9 @@ def create_radar_chart(df, selected_faculty, skill_group='Core Skills'):
         fill='toself',
         name=selected_faculty,
     ))
+    
+    
+
     
     fig.update_layout(
         polar=dict(
@@ -149,7 +144,11 @@ def create_radar_chart(df, selected_faculty, skill_group='Core Skills'):
                 range=[global_min, global_max],
                 title='Average Z-Score',
                 angle=0,  # Position at bottom
-                tickfont=dict(size=12)
+                tickfont=dict(size=12),
+                # Force specific tick values to ensure we get a line at zero
+                tickvals=np.linspace(global_min, global_max, 5),  # 5 ticks including min and max
+                ticktext=[f"{x:.1f}" for x in np.linspace(global_min, global_max, 5)],
+                
             ),
             angularaxis=dict(
                 direction='clockwise',
